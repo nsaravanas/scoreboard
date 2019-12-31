@@ -18,13 +18,8 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    @GetMapping(path = "/game/{gameId}")
-    public Game getGame(@PathVariable ObjectId gameId) {
-        return gameService.getGame(gameId);
-    }
-
-    @GetMapping(path = "/game/id/{gameId}")
-    public Game getGame(@PathVariable Integer gameId) {
+    @GetMapping(path = "/{gameId}")
+    public Game getGame(@PathVariable String gameId) {
         return gameService.getGame(gameId);
     }
 
@@ -34,17 +29,17 @@ public class GameController {
         return gameService.createGame(gameType);
     }
 
-    @GetMapping(path = "/game/{gameId}/players")
+    @GetMapping(path = "/{gameId}/players")
     public List<Player> getPlayers(@PathVariable ObjectId gameId) {
         return gameService.getPlayers(gameId);
     }
 
-    @GetMapping(path = "/game/{gameId}/player/{playerId}")
+    @GetMapping(path = "/{gameId}/player/{playerId}")
     public Player getPlayer(@PathVariable ObjectId gameId, @PathVariable ObjectId playerId) {
         return gameService.getPlayer(gameId, playerId);
     }
 
-    @PostMapping(path = "/game/{gameId}/player/add")
+    @PostMapping(path = "/{gameId}/player/add")
     public Player addPlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
         return gameService.addPlayer(gameId, player);
     }
@@ -59,17 +54,17 @@ public class GameController {
         gameService.deletePlayer(gameId, player);
     }
 
-    @GetMapping(path = "/game/{gameId}/scores")
+    @GetMapping(path = "/{gameId}/scores")
     public List<Score> getScores(@PathVariable ObjectId gameId) {
         return gameService.getScores(gameId);
     }
 
-    @GetMapping(path = "/game/{gameId}/score/{scoreId}")
+    @GetMapping(path = "/{gameId}/score/{scoreId}")
     public Score getScore(@PathVariable ObjectId gameId, @PathVariable ObjectId scoreId) {
         return gameService.getScore(gameId, scoreId);
     }
 
-    @PostMapping(path = "/game/{gameId}/score/add")
+    @PostMapping(path = "/{gameId}/score/add")
     public Score addScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
         return gameService.addScore(gameId, score);
     }

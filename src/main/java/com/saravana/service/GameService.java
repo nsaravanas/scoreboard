@@ -9,13 +9,12 @@ import com.saravana.repository.PlayerRepository;
 import com.saravana.repository.ScoreRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class GameService {
@@ -33,20 +32,36 @@ public class GameService {
         final Game game = new Game();
         game.setId(ObjectId.get());
         game.setGameType(gameType);
+        game.setGameId(findNextGameId());
         return gameRepository.save(game);
     }
 
-    public Game getGame(ObjectId gameId) {
-        return gameRepository.findById(gameId)
-                .orElseThrow(() -> new IllegalArgumentException("Can't find a game with _id " + gameId));
+    public Game getLastGame() {
+        return gameRepository.findTopByOrderByIdDesc().orElse(null);
     }
 
-    public Game getGame(Integer gameId) {
-        final Game probe = new Game();
-        probe.setGameId(gameId);
-        final ExampleMatcher matcher = ExampleMatcher.matching();
-        return gameRepository.findOne(Example.of(probe, matcher))
-                .orElseThrow(() -> new IllegalArgumentException("Can't find a probe with _id " + gameId));
+    public int findNextGameId() {
+        Game game = getLastGame();
+        return (game == null || game.getGameId() == null) ? 0 : game.getGameId() + 1;
+    }
+
+    public Game getGame(Object gameId) {
+        Objects.nonNull(gameId);
+        Optional<Game> optionalGame;
+        if (gameId instanceof ObjectId) {
+            optionalGame = gameRepository.findById((ObjectId) gameId);
+        } else if (gameId instanceof String) {
+            if (((String) gameId).length() == 24) {
+                optionalGame = gameRepository.findById(new ObjectId((String) gameId));
+            } else {
+                Integer gameNo = Integer.parseInt((String) gameId);
+                optionalGame = gameRepository.findByGameId(gameNo);
+            }
+        } else {
+            throw new IllegalArgumentException("Unknown gameId type " + gameId);
+        }
+
+        return optionalGame.orElseThrow(() -> new IllegalArgumentException("Can't find a game with _id " + gameId));
     }
 
     public Player addPlayer(ObjectId gameId, Player player) {
@@ -93,10 +108,7 @@ public class GameService {
     }
 
     public List<Player> getPlayers(ObjectId gameId) {
-        final Game game = getGame(gameId);
-        List<Player> players = new ArrayList<>();
-        playerRepository.findAllById(List.of(gameId)).forEach(players::add);
-        return players;
+        return playerRepository.findAllByGameId(gameId);
     }
 
     public Score addScore(ObjectId gameId, Score score) {
@@ -143,10 +155,7 @@ public class GameService {
     }
 
     public List<Score> getScores(ObjectId gameId) {
-        final Game game = getGame(gameId);
-        List<Score> scores = new ArrayList<>();
-        scoreRepository.findAllById(List.of(game.getId())).forEach(scores::add);
-        return scores;
+        return scoreRepository.findAllByGameId(gameId);
     }
 
 }
