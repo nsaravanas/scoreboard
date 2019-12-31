@@ -1,10 +1,11 @@
 package com.saravana.controller;
 
-import org.saravana.common.GameType;
-import org.saravana.model.Game;
-import org.saravana.model.Player;
-import org.saravana.model.Score;
-import org.saravana.service.GameService;
+import com.saravana.common.GameType;
+import com.saravana.model.Game;
+import com.saravana.model.Player;
+import com.saravana.model.Score;
+import com.saravana.service.GameService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,44 +17,64 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    @GetMapping(path = "/game/{:gameId}")
+    public Game getGame(@PathVariable ObjectId gameId) {
+        return gameService.getGame(gameId);
+    }
+
     @PostMapping(path = "/create")
     public Game createGame(@RequestParam GameType gameType) {
         return gameService.createGame(gameType);
     }
 
-    @GetMapping(path = "/{:gameId}")
-    public Game getGame(@PathVariable int gameId) {
-        return gameService.getGame(gameId);
+    @GetMapping(path = "/game/{:gameId}/players")
+    public List<Player> getPlayers(@PathVariable ObjectId gameId) {
+        return gameService.getPlayers(gameId);
     }
 
-    @PostMapping(path = "/{:gameId}/player/add")
-    public Game addPlayer(@PathVariable int gameId, @RequestBody List<Player> players) {
-        return gameService.addPlayer(gameId, players);
+    @GetMapping(path = "/game/{:gameId}/player/{:playerId}")
+    public Player getPlayer(@PathVariable ObjectId gameId, @PathVariable ObjectId playerId) {
+        return gameService.getPlayer(gameId, playerId);
     }
 
-    @PutMapping(path = "/{:gameId}/player/edit")
-    public Game editPlayer(@PathVariable int gameId, @RequestBody Player player) {
-        return gameService.editPlayer(gameId, player);
+    @PostMapping(path = "/game/{:gameId}/player/add")
+    public Player addPlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
+        return gameService.addPlayer(gameId, player);
+    }
+
+    @PutMapping(path = "/{:gameId}/player/update")
+    public Player updatePlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
+        return gameService.updatePlayer(gameId, player);
     }
 
     @DeleteMapping(path = "/{:gameId}/player/delete")
-    public Game deletePlayer(@PathVariable int gameId, @RequestBody Player player) {
-        return gameService.deletePlayer(gameId, player);
+    public void deletePlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
+        gameService.deletePlayer(gameId, player);
     }
 
-    @PostMapping(path = "/{:gameId}/score/add")
-    public Game addScore(@PathVariable int gameId, @RequestBody Score score) {
+    @GetMapping(path = "/game/{:gameId}/scores")
+    public List<Score> getScores(@PathVariable ObjectId gameId) {
+        return gameService.getScores(gameId);
+    }
+
+    @GetMapping(path = "/game/{:gameId}/score/{:scoreId}")
+    public Score getScore(@PathVariable ObjectId gameId, @PathVariable ObjectId scoreId) {
+        return gameService.getScore(gameId, scoreId);
+    }
+
+    @PostMapping(path = "/game/{:gameId}/score/add")
+    public Score addScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
         return gameService.addScore(gameId, score);
     }
 
-    @PutMapping(path = "/{:gameId}/score/edit")
-    public Game updateScore(@PathVariable int gameId, @RequestBody Score score) {
-        return gameService.editScore(gameId, score);
+    @PutMapping(path = "/{:gameId}/score/update")
+    public Score updateScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
+        return gameService.updateScore(gameId, score);
     }
 
     @DeleteMapping(path = "/{:gameId}/score/delete")
-    public Game deleteScore(@PathVariable int gameId, @RequestBody Score score) {
-        return gameService.deleteScore(gameId, score);
+    public void deleteScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
+        gameService.deleteScore(gameId, score);
     }
 
 }

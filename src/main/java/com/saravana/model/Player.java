@@ -19,7 +19,7 @@ import java.util.Date;
 public class Player {
 
     @Id
-    private ObjectId _id;
+    private ObjectId id;
 
     private ObjectId gameId;
 
@@ -29,12 +29,12 @@ public class Player {
 
     private Date updatedOn;
 
-    public ObjectId get_id() {
-        return _id;
+    public ObjectId getId() {
+        return id;
     }
 
-    public void set_id(ObjectId _id) {
-        this._id = _id;
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public ObjectId getGameId() {
@@ -68,4 +68,5 @@ public class Player {
     public void setUpdatedOn(Date updatedOn) {
         this.updatedOn = updatedOn;
     }
+
 }

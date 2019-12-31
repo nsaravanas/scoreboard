@@ -1,23 +1,21 @@
 package com.saravana.service;
 
+import com.saravana.common.GameType;
+import com.saravana.model.Game;
+import com.saravana.model.Player;
+import com.saravana.model.Score;
+import com.saravana.repository.GameRepository;
+import com.saravana.repository.PlayerRepository;
+import com.saravana.repository.ScoreRepository;
 import org.bson.types.ObjectId;
-import org.saravana.common.GameType;
-import org.saravana.model.Game;
-import org.saravana.model.Player;
-import org.saravana.model.Score;
-import org.saravana.model.ScoreCard;
-import org.saravana.repository.GameRepository;
-import org.saravana.repository.PlayerRepository;
-import org.saravana.repository.ScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class GameService {
@@ -33,7 +31,7 @@ public class GameService {
 
     public Game createGame(GameType gameType) {
         final Game game = new Game();
-        game.set_id(ObjectId.get());
+        game.setId(ObjectId.get());
         game.setGameType(gameType);
         return gameRepository.save(game);
     }
@@ -51,93 +49,103 @@ public class GameService {
                 .orElseThrow(() -> new IllegalArgumentException("Can't find a probe with _id " + gameId));
     }
 
-    public List<Player> getPlayers(ObjectId gameId) {
-        Iterable<Player> it = playerRepository.findAllById(Arrays.asList(gameId));
-        List<Player> players = new ArrayList<>();
-        it.forEach(players::add);
-        return players;
-    }
-
-    public List<Player> addPlayer(ObjectId gameId, List<Player> players) {
+    public Player addPlayer(ObjectId gameId, Player player) {
         final Game game = getGame(gameId);
-        Objects.nonNull(players);
-        final List<Player> dbPlayers = getPlayers(game.get_id());
-        for (Player db : dbPlayers) {
-            for (Player rq : players) {
-                if (db.get_id().equals(rq.get_id())) {
-                    throw new IllegalArgumentException(db.getName() + " name already exists");
-                }
-            }
-        }
-        return playerRepository.saveAll(players);
-    }
-
-    public Player editPlayer(ObjectId gameId, Player player) {
-        final Game game = getGame(gameId);
-        Objects.nonNull(player);
-        List<Player> existingPlayers = getPlayers(game.get_id());
-        for (Player db : existingPlayers) {
-            if (db.get_id().equals(player.get_id())) {
-                db.setName(player.getName());
-            }
-        }
+        player.setGameId(game.getId());
+        player.setId(ObjectId.get());
+        player.setAddedOn(new Date());
         return playerRepository.save(player);
     }
 
-    public void deletePlayer(ObjectId gameId, Player player) {
+    public Player updatePlayer(ObjectId gameId, Player updatePlayer) {
         final Game game = getGame(gameId);
-        Objects.nonNull(player);
-        List<Player> players = getPlayers(game.get_id());
-        for (Player p : players) {
-            if (p.get_id().equals(player.get_id())) {
-                playerRepository.deleteById(player.get_id());
+        final List<Player> players = getPlayers(game.getId());
+        for (Player player : players) {
+            if (player.getId().equals(updatePlayer.getId())) {
+                player.setName(updatePlayer.getName());
+                return playerRepository.save(player);
             }
         }
+        throw new IllegalArgumentException("Can't find player to update " + updatePlayer.getId());
     }
 
-    public Score addScore(ObjectId gameId, ScoreCard scoreCard) {
+    public void deletePlayer(ObjectId gameId, Player deletePlayer) {
         final Game game = getGame(gameId);
-        Score score = getScore(game.get_id());
-        if (score == null) {
-            score = new Score();
-            score.setGameId(game.get_id());
-            score.setScore(new ArrayList<>());
+        final List<Player> players = getPlayers(game.getId());
+        for (Player player : players) {
+            if (player.getId().equals(deletePlayer.getId())) {
+                playerRepository.deleteById(player.getId());
+                return;
+            }
         }
-        if (score.getScore() == null) {
-            score.setScore(new ArrayList<>());
+        throw new IllegalArgumentException("Can't find player to delete " + deletePlayer.getId());
+    }
+
+    public Player getPlayer(ObjectId gameId, ObjectId playerId) {
+        final Game game = getGame(gameId);
+        final List<Player> players = getPlayers(game.getId());
+        for (Player player : players) {
+            if (player.getId().equals(playerId)) {
+                return player;
+            }
         }
-        score.getScore().add(scoreCard);
+        throw new IllegalArgumentException("Can't find player " + playerId);
+    }
+
+    public List<Player> getPlayers(ObjectId gameId) {
+        final Game game = getGame(gameId);
+        List<Player> players = new ArrayList<>();
+        playerRepository.findAllById(List.of(gameId)).forEach(players::add);
+        return players;
+    }
+
+    public Score addScore(ObjectId gameId, Score score) {
+        final Game game = getGame(gameId);
+        score.setGameId(game.getId());
+        score.setAddedOn(new Date());
         return scoreRepository.save(score);
     }
 
-    public Score editScore(ObjectId gameId, ScoreCard scoreCard) {
-        Objects.nonNull(gameId);
-        Objects.nonNull(scoreCard);
+    public Score updateScore(ObjectId gameId, Score updateScore) {
         final Game game = getGame(gameId);
-        final Score score = getScore(game.get_id());
-        for (ScoreCard dbScoreCard : score.getScore()) {
-            if (dbScoreCard.getScoreCardId().equals(scoreCard.getScoreCardId())) {
-                dbScoreCard.getScoreMap().putAll(scoreCard.getScoreMap());
+        final List<Score> scores = getScores(game.getId());
+        for (Score score : scores) {
+            if (score.getId().equals(updateScore.getId())) {
+                score.getScore().putAll(updateScore.getScore());
+                return scoreRepository.save(score);
             }
         }
-        return scoreRepository.save(score);
+        throw new IllegalArgumentException("Can't find score to update " + updateScore.getId());
     }
 
-    public void deleteScore(ObjectId gameId, ScoreCard scoreCard) {
-        Objects.nonNull(gameId);
-        Objects.nonNull(scoreCard);
+    public void deleteScore(ObjectId gameId, Score deleteScore) {
         final Game game = getGame(gameId);
-        final Score score = getScore(game.get_id());
-        for (ScoreCard sc : score.getScore()) {
-            if (sc.getScoreCardId().equals(scoreCard.getScoreCardId())) {
-                playerRepository.deleteById(sc.getScoreCardId());
+        final List<Score> scores = getScores(game.getId());
+        for (Score score : scores) {
+            if (score.getId().equals(deleteScore.getId())) {
+                scoreRepository.deleteById(score.getId());
+                return;
             }
         }
+        throw new IllegalArgumentException("Can't find score to delete " + deleteScore.getId());
     }
 
-    public Score getScore(ObjectId gameId) {
+    public Score getScore(ObjectId gameId, ObjectId scoreId) {
         final Game game = getGame(gameId);
-        return scoreRepository.findById(game.get_id()).orElse(null);
+        final List<Score> scores = getScores(game.getId());
+        for (Score score : scores) {
+            if (score.getId().equals(scoreId)) {
+                return score;
+            }
+        }
+        throw new IllegalArgumentException("Can't find score " + scoreId);
+    }
+
+    public List<Score> getScores(ObjectId gameId) {
+        final Game game = getGame(gameId);
+        List<Score> scores = new ArrayList<>();
+        scoreRepository.findAllById(List.of(game.getId())).forEach(scores::add);
+        return scores;
     }
 
 }

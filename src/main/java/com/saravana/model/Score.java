@@ -4,35 +4,45 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Document
 public class Score {
 
     @Id
-    private ObjectId _id;
+    private ObjectId id;
 
-    private List<ScoreCard> score = new ArrayList<>();
+    private ObjectId gameId;
+
+    private Map<ObjectId, Integer> score = new HashMap<>();
 
     private Date addedOn;
 
     private Date updatedOn;
 
-    public ObjectId get_id() {
-        return _id;
+    public ObjectId getId() {
+        return id;
     }
 
-    public void set_id(ObjectId _id) {
-        this._id = _id;
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
-    public List<ScoreCard> getScore() {
+    public ObjectId getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(ObjectId gameId) {
+        this.gameId = gameId;
+    }
+
+    public Map<ObjectId, Integer> getScore() {
         return score;
     }
 
-    public void setScore(List<ScoreCard> score) {
+    public void setScore(Map<ObjectId, Integer> score) {
         this.score = score;
     }
 

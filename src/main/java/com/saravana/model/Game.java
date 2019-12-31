@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -59,10 +58,6 @@ public class Game {
 
     private GameType gameType;
 
-    private List<Player> players;
-
-    private List<Score> scores;
-
     private Date addedOn;
 
     private Date updatedOn;
@@ -91,22 +86,6 @@ public class Game {
 
     public void setGameType(GameType gameType) {
         this.gameType = gameType;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
-    }
-
-    public List<Score> getScores() {
-        return scores;
-    }
-
-    public void setScores(List<Score> scores) {
-        this.scores = scores;
     }
 
     public Date getAddedOn() {
