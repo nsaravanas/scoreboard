@@ -102,6 +102,7 @@ public class GameService {
     public Score addScore(ObjectId gameId, Score score) {
         final Game game = getGame(gameId);
         score.setGameId(game.getId());
+        score.setId(ObjectId.get());
         score.setAddedOn(new Date());
         return scoreRepository.save(score);
     }

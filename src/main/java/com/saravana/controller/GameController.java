@@ -11,68 +11,75 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/games")
+@RestController
+@RequestMapping("/games")
 public class GameController {
 
     @Autowired
     private GameService gameService;
 
-    @GetMapping(path = "/game/{:gameId}")
+    @GetMapping(path = "/game/{gameId}")
     public Game getGame(@PathVariable ObjectId gameId) {
         return gameService.getGame(gameId);
     }
 
-    @PostMapping(path = "/create")
-    public Game createGame(@RequestParam GameType gameType) {
+    @GetMapping(path = "/game/id/{gameId}")
+    public Game getGame(@PathVariable Integer gameId) {
+        return gameService.getGame(gameId);
+    }
+
+    @PostMapping(path = "/create/{gameType}")
+    @ResponseBody
+    public Game createGame(@PathVariable GameType gameType) {
         return gameService.createGame(gameType);
     }
 
-    @GetMapping(path = "/game/{:gameId}/players")
+    @GetMapping(path = "/game/{gameId}/players")
     public List<Player> getPlayers(@PathVariable ObjectId gameId) {
         return gameService.getPlayers(gameId);
     }
 
-    @GetMapping(path = "/game/{:gameId}/player/{:playerId}")
+    @GetMapping(path = "/game/{gameId}/player/{playerId}")
     public Player getPlayer(@PathVariable ObjectId gameId, @PathVariable ObjectId playerId) {
         return gameService.getPlayer(gameId, playerId);
     }
 
-    @PostMapping(path = "/game/{:gameId}/player/add")
+    @PostMapping(path = "/game/{gameId}/player/add")
     public Player addPlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
         return gameService.addPlayer(gameId, player);
     }
 
-    @PutMapping(path = "/{:gameId}/player/update")
+    @PutMapping(path = "/{gameId}/player/update")
     public Player updatePlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
         return gameService.updatePlayer(gameId, player);
     }
 
-    @DeleteMapping(path = "/{:gameId}/player/delete")
+    @DeleteMapping(path = "/{gameId}/player/delete")
     public void deletePlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
         gameService.deletePlayer(gameId, player);
     }
 
-    @GetMapping(path = "/game/{:gameId}/scores")
+    @GetMapping(path = "/game/{gameId}/scores")
     public List<Score> getScores(@PathVariable ObjectId gameId) {
         return gameService.getScores(gameId);
     }
 
-    @GetMapping(path = "/game/{:gameId}/score/{:scoreId}")
+    @GetMapping(path = "/game/{gameId}/score/{scoreId}")
     public Score getScore(@PathVariable ObjectId gameId, @PathVariable ObjectId scoreId) {
         return gameService.getScore(gameId, scoreId);
     }
 
-    @PostMapping(path = "/game/{:gameId}/score/add")
+    @PostMapping(path = "/game/{gameId}/score/add")
     public Score addScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
         return gameService.addScore(gameId, score);
     }
 
-    @PutMapping(path = "/{:gameId}/score/update")
+    @PutMapping(path = "/{gameId}/score/update")
     public Score updateScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
         return gameService.updateScore(gameId, score);
     }
 
-    @DeleteMapping(path = "/{:gameId}/score/delete")
+    @DeleteMapping(path = "/{gameId}/score/delete")
     public void deleteScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
         gameService.deleteScore(gameId, score);
     }
