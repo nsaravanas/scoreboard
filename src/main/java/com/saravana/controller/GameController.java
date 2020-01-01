@@ -38,9 +38,9 @@ public class GameController {
         return gameService.getPlayers(gameId);
     }
 
-    @GetMapping(path = "/{gameId}/player/{playerId}")
-    public Player getPlayer(@PathVariable ObjectId gameId, @PathVariable ObjectId playerId) {
-        return gameService.getPlayer(gameId, playerId);
+    @GetMapping(path = "/{gameId}/player/get")
+    public Player getPlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
+        return gameService.getPlayer(gameId, player.getId());
     }
 
     @PostMapping(path = "/{gameId}/player/add")
@@ -63,9 +63,9 @@ public class GameController {
         return gameService.getScores(gameId);
     }
 
-    @GetMapping(path = "/{gameId}/score/{scoreId}")
-    public Score getScore(@PathVariable ObjectId gameId, @PathVariable ObjectId scoreId) {
-        return gameService.getScore(gameId, scoreId);
+    @GetMapping(path = "/{gameId}/score/get")
+    public Score getScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
+        return gameService.getScore(gameId, score.getId());
     }
 
     @PostMapping(path = "/{gameId}/score/add")

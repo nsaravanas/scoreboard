@@ -13,7 +13,6 @@ import java.util.Map;
 public class Score {
 
     @Id
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private ObjectId id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

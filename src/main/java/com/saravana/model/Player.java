@@ -20,7 +20,6 @@ import java.util.Date;
 public class Player {
 
     @Id
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private ObjectId id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
