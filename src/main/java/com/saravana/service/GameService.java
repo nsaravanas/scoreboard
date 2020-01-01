@@ -65,7 +65,14 @@ public class GameService {
         return optionalGame.orElseThrow(() -> new IllegalArgumentException("Can't find a game with _id " + gameId));
     }
 
-    public Player addPlayer(ObjectId gameId, Player player) {
+    public Game updateGame(ObjectId gameId, Game updateGame) {
+        final Game game = getGame(gameId);
+        game.setMaxScore(updateGame.getMaxScore());
+        game.setUpdatedOn(new Date());
+        return gameRepository.save(game);
+    }
+
+    public Player createPlayer(ObjectId gameId, Player player) {
         final Game game = getGame(gameId);
         player.setGameId(game.getId());
         player.setId(ObjectId.get());
@@ -79,6 +86,7 @@ public class GameService {
         for (Player player : players) {
             if (player.getId().equals(updatePlayer.getId())) {
                 player.setName(updatePlayer.getName());
+                player.setUpdatedOn(new Date());
                 return playerRepository.save(player);
             }
         }
@@ -112,7 +120,7 @@ public class GameService {
         return playerRepository.findAllByGameId(gameId);
     }
 
-    public Score addScore(ObjectId gameId, Score score) {
+    public Score createScore(ObjectId gameId, Score score) {
         final Game game = getGame(gameId);
         score.setGameId(game.getId());
         score.setId(ObjectId.get());
@@ -126,6 +134,7 @@ public class GameService {
         for (Score score : scores) {
             if (score.getId().equals(updateScore.getId())) {
                 score.getScore().putAll(updateScore.getScore());
+                score.setUpdatedOn(new Date());
                 return scoreRepository.save(score);
             }
         }

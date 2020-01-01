@@ -1,5 +1,6 @@
 package com.saravana.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saravana.common.GameType;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -52,17 +53,22 @@ import java.util.Date;
 public class Game {
 
     @Id
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private ObjectId id;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer gameId;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private GameType gameType;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date addedOn;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
 
-    private int maxScore;
+    private int maxScore = Integer.MAX_VALUE;
 
     public ObjectId getId() {
         return id;

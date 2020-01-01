@@ -24,9 +24,13 @@ public class GameController {
     }
 
     @PostMapping(path = "/create")
-    @ResponseBody
     public Game createGame(@RequestParam("type") GameType gameType) {
         return gameService.createGame(gameType);
+    }
+
+    @PutMapping(path = "/{gameId}/update")
+    public Game updateGame(@PathVariable ObjectId gameId, @RequestBody Game game) {
+        return gameService.updateGame(gameId, game);
     }
 
     @GetMapping(path = "/{gameId}/players")
@@ -41,7 +45,7 @@ public class GameController {
 
     @PostMapping(path = "/{gameId}/player/add")
     public Player addPlayer(@PathVariable ObjectId gameId, @RequestBody Player player) {
-        return gameService.addPlayer(gameId, player);
+        return gameService.createPlayer(gameId, player);
     }
 
     @PutMapping(path = "/{gameId}/player/update")
@@ -66,7 +70,7 @@ public class GameController {
 
     @PostMapping(path = "/{gameId}/score/add")
     public Score addScore(@PathVariable ObjectId gameId, @RequestBody Score score) {
-        return gameService.addScore(gameId, score);
+        return gameService.createScore(gameId, score);
     }
 
     @PutMapping(path = "/{gameId}/score/update")

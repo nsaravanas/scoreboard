@@ -1,5 +1,6 @@
 package com.saravana.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,14 +20,18 @@ import java.util.Date;
 public class Player {
 
     @Id
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private ObjectId id;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private ObjectId gameId;
 
     private String name;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date addedOn;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
 
     public ObjectId getId() {
