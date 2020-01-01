@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/games")
+@RequestMapping("/game")
 public class GameController {
 
     @Autowired
@@ -23,9 +23,9 @@ public class GameController {
         return gameService.getGame(gameId);
     }
 
-    @PostMapping(path = "/create/{gameType}")
+    @PostMapping(path = "/create")
     @ResponseBody
-    public Game createGame(@PathVariable GameType gameType) {
+    public Game createGame(@RequestParam("type") GameType gameType) {
         return gameService.createGame(gameType);
     }
 

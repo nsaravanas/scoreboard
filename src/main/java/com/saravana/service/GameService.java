@@ -33,6 +33,7 @@ public class GameService {
         game.setId(ObjectId.get());
         game.setGameType(gameType);
         game.setGameId(findNextGameId());
+        game.setAddedOn(new Date());
         return gameRepository.save(game);
     }
 
@@ -42,7 +43,7 @@ public class GameService {
 
     public int findNextGameId() {
         Game game = getLastGame();
-        return (game == null || game.getGameId() == null) ? 0 : game.getGameId() + 1;
+        return (game == null || game.getGameId() == null) ? 1 : game.getGameId() + 1;
     }
 
     public Game getGame(Object gameId) {
