@@ -11,10 +11,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -131,6 +129,7 @@ public class GameService {
     public Score updateScore(ObjectId gameId, Score updateScore) {
         final Game game = getGame(gameId);
         final List<Score> scores = getScores(game.getId());
+        this.isValidScore(getPlayers(game.getId()), updateScore.getScore());
         for (Score score : scores) {
             if (score.getId().equals(updateScore.getId())) {
                 score.getScore().putAll(updateScore.getScore());
@@ -166,6 +165,18 @@ public class GameService {
 
     public List<Score> getScores(ObjectId gameId) {
         return scoreRepository.findAllByGameId(gameId);
+    }
+
+    private void isValidScore(List<Player> players, Map<ObjectId, Integer> score) {
+        Set<ObjectId> pIds = players.stream()
+                .map(Player::getId)
+                .collect(Collectors.toSet());
+        Set<ObjectId> sIds = score.keySet();
+        sIds.forEach(sId -> {
+            if (!pIds.contains(sId)) {
+                throw new IllegalArgumentException("Can't find playerId  " + sId);
+            }
+        });
     }
 
 }
